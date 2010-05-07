@@ -1,11 +1,15 @@
-class Table
-  include DataMapper::Resource
-  include NodeExtension
+class Table < Node
+  key :caption, String
+  key :data, Array
+  key :has_header_row, Boolean
 
-  property :id, Serial
-  property :caption, String, :required => true
-  property :data, Csv, :required => true, :lazy => false
-  property :has_header_row, Boolean, :required => true, :default => true
+  validates_presence_of :caption, :data, :has_header_row
 
-  after :save, :set_id
+  before_save :set_defaults
+
+  private
+
+  def set_defaults
+    self.has_header_row ||= true
+  end
 end
